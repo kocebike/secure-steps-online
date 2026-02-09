@@ -2,13 +2,45 @@ import { useState } from "react";
 import { Shield, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: window.location.origin },
+        });
+        if (error) throw error;
+        toast.success("Проверете имейла си за потвърждение!");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        toast.success("Успешен вход!");
+        navigate("/");
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Възникна грешка");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background cyber-grid">
@@ -29,18 +61,19 @@ const Login = () => {
                   {isSignUp ? "Създайте акаунт" : "Влезте в акаунта си"}
                 </h1>
                 <p className="text-sm text-muted-foreground mt-2">
-                  {isSignUp
-                    ? "Присъединете се към КиберЩит"
-                    : "Добре дошли обратно в КиберЩит"}
+                  {isSignUp ? "Присъединете се към КиберЩит" : "Добре дошли обратно в КиберЩит"}
                 </p>
               </div>
 
-              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
                     type="email"
                     placeholder="имейл@пример.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
                     className="pl-10 bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary"
                   />
                 </div>
@@ -49,6 +82,10 @@ const Login = () => {
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Парола"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={6}
                     className="pl-10 pr-10 bg-secondary/50 border-border/50 text-foreground placeholder:text-muted-foreground focus:border-primary"
                   />
                   <button
@@ -62,9 +99,10 @@ const Login = () => {
 
                 <Button
                   type="submit"
+                  disabled={loading}
                   className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold h-11 neon-border"
                 >
-                  {isSignUp ? "Регистрация" : "Вход"}
+                  {loading ? "Зареждане..." : isSignUp ? "Регистрация" : "Вход"}
                 </Button>
               </form>
 
@@ -73,9 +111,7 @@ const Login = () => {
                   onClick={() => setIsSignUp(!isSignUp)}
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
-                  {isSignUp
-                    ? "Вече имате акаунт? Влезте"
-                    : "Нямате акаунт? Регистрирайте се"}
+                  {isSignUp ? "Вече имате акаунт? Влезте" : "Нямате акаунт? Регистрирайте се"}
                 </button>
               </div>
             </div>

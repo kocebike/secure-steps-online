@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Modules from "./pages/Modules";
 import PasswordSecurity from "./pages/PasswordSecurity";
@@ -12,6 +13,8 @@ import NetworkSecurity from "./pages/NetworkSecurity";
 import OnlinePrivacy from "./pages/OnlinePrivacy";
 import DeviceSecurity from "./pages/DeviceSecurity";
 import Login from "./pages/Login";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -19,22 +22,26 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/modules" element={<Modules />} />
-          <Route path="/password-security" element={<PasswordSecurity />} />
-          <Route path="/phishing-protection" element={<PhishingProtection />} />
-          <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
-          <Route path="/network-security" element={<NetworkSecurity />} />
-          <Route path="/online-privacy" element={<OnlinePrivacy />} />
-          <Route path="/device-security" element={<DeviceSecurity />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/modules" element={<Modules />} />
+            <Route path="/password-security" element={<PasswordSecurity />} />
+            <Route path="/phishing-protection" element={<PhishingProtection />} />
+            <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
+            <Route path="/network-security" element={<NetworkSecurity />} />
+            <Route path="/online-privacy" element={<OnlinePrivacy />} />
+            <Route path="/device-security" element={<DeviceSecurity />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
