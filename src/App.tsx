@@ -4,6 +4,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
+import Modules from "./pages/Modules";
+import PasswordSecurity from "./pages/PasswordSecurity";
+import PhishingProtection from "./pages/PhishingProtection";
+import TwoFactorAuth from "./pages/TwoFactorAuth";
+import NetworkSecurity from "./pages/NetworkSecurity";
+import OnlinePrivacy from "./pages/OnlinePrivacy";
+import DeviceSecurity from "./pages/DeviceSecurity";
+import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -16,7 +24,14 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="/modules" element={<Modules />} />
+          <Route path="/password-security" element={<PasswordSecurity />} />
+          <Route path="/phishing-protection" element={<PhishingProtection />} />
+          <Route path="/two-factor-auth" element={<TwoFactorAuth />} />
+          <Route path="/network-security" element={<NetworkSecurity />} />
+          <Route path="/online-privacy" element={<OnlinePrivacy />} />
+          <Route path="/device-security" element={<DeviceSecurity />} />
+          <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
